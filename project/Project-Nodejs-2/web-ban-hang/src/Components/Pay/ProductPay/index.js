@@ -162,6 +162,7 @@ function ProductsPay(props) {
     setServiceTypeId(fee.service_type_id);
     setActive(index);
   };
+
   useEffect(() => {
     if (serviceFee) {
       if (serviceFee.length && serviceFee[0].data) {

@@ -41,7 +41,7 @@ import {
   orderSelector,
 } from "../../Store/Reducer/orderReducer";
 import { isEmptyObject } from "../../utils";
-import { ethSelector, initCallAbi } from "../../Store/Reducer/ethReducer";
+import { ethSelector } from "../../Store/Reducer/ethReducer";
 const override = css`
   display: block;
   margin: 0 auto;
@@ -79,7 +79,6 @@ function Pay({ axiosJWT }) {
   const address_api = useSelector(addressApiSelector);
   // data cart products
   const cartProducts = useSelector(cartSelector);
-  const ether = useSelector(ethSelector);
   // data user address
   const userAddressSlt = useSelector(userAddressSelector);
   const loading = useSelector(loadingSelector);
@@ -114,7 +113,7 @@ function Pay({ axiosJWT }) {
   const [address_user_api, setAddress_user_api] = useState(null);
   const [payMethodActive, setPayMethodActive] = useState(null);
   const [isRedirectToSuccessPage, setIsRedirectToSuccessPage] = useState(false);
-  const [feeService, setFeeServince] = useState("");
+  const [feeService, setFeeServince] = useState(20000);
   const [serviceFee, setServiceFee] = useState(null);
   const [serviceTypeId, setServiceTypeId] = useState(null);
   const [lngLat, setLngLat] = useState({ long: 0, lat: 0 });
@@ -337,7 +336,7 @@ function Pay({ axiosJWT }) {
     }, 1000);
   }, [
     address_user_api,
-    auth.tokenAuth,
+    auth,
     axiosJWT,
     changeCheckbox,
     dispatch,
@@ -461,84 +460,12 @@ function Pay({ axiosJWT }) {
     setPayMethod(method);
   };
 
-  const loadWeb3 = async () => {
-    if (window.ethereum) {
-      await window.ethereum.enable();
-      return (window.web3 = new Web3(window.ethereum));
-    } else if (window.web3) {
-      return (window.web3 = new Web3(window.web3.currentProvider));
-    } else {
-      window.alert(
-        "Non-Ethereum browser detected. You should consider trying MetaMask!"
-      );
-      return null;
-    }
-  };
-
-  const init = useCallback(
-    async (artifact) => {
-      dispatch(
-        initCallAbi({
-          data: {
-            ...ether,
-            loaded: true,
-          },
-        })
-      );
-      if (artifact?.myMarketplace) {
-        const web3 = await loadWeb3();
-        if (web3) {
-          const accounts = await web3.eth.requestAccounts();
-          const networkID = await web3.eth.net.getId();
-
-          const { abi: myMarketplaceAbi } = artifact.myMarketplace;
-
-          let myMarketplaceInstance;
-
-          try {
-            myMarketplaceInstance = new web3.eth.Contract(
-              myMarketplaceAbi,
-              artifact.myMarketplace.networks[networkID].address
-            );
-            myMarketplaceInstance.methods
-              .createProduct(products.name, products.price)
-              .send({ from: accounts[0] })
-              .once("receipt", (receipt) => {
-                console.log("error payment", receipt);
-              });
-            myMarketplaceInstance.methods
-              .purchaseProduct()
-              .send({ from: accounts[0], value: products.price })
-              .once("receipt", (receipt) => {
-                console.log("error payment", receipt);
-              });
-          } catch (err) {
-            console.log({ err });
-          }
-          dispatch(
-            initCallAbi({
-              data: {
-                artifact,
-                web3,
-                accounts,
-                networkID,
-                contracts: { myMarketplaceInstance },
-                loaded: false,
-              },
-            })
-          );
-        }
-      }
-    },
-    [dispatch, ether, products]
-  );
-
   const handleMethodPayProduct = useCallback(() => {
     if (!isError) {
       if (!isEmptyObject(valueAddress || {})) {
         if (payMethod === "Thanh toán Online") {
           if (payMethodActive) {
-            if (feeService) {
+            if (feeService || 200000) {
               switch (payMethodActive.title) {
                 case "PayPal":
                   dispatch(setLoadingAction(true));
@@ -547,22 +474,13 @@ function Pay({ axiosJWT }) {
                       products,
                       email: auth.user.email,
                       message,
-                      paymentFee: feeService,
+                      paymentFee: feeService || 200,
                       serviceTypeId,
                     })
                   );
                   break;
                 case "Metamask":
-                  const tryInit = async () => {
-                    try {
-                      const myMarketplace = require("../../contracts/Marketplace.json");
-                      const artifact = { myMarketplace };
-                      init(artifact);
-                    } catch (err) {
-                      console.log({ err });
-                    }
-                  };
-                  tryInit();
+                  message.warn("not payment with metamash!");
                   break;
                 default:
               }
@@ -577,7 +495,7 @@ function Pay({ axiosJWT }) {
               });
               if (productsId.length) {
                 if (userAddress.items.length) {
-                  if (feeService) {
+                  if (feeService || 200) {
                     userAddress.items.forEach((item) => {
                       if (item.status) {
                         dispatch(setLoadingAction(true));
@@ -589,7 +507,7 @@ function Pay({ axiosJWT }) {
                             city: item.address,
                             productsID: productsId,
                             isPayment: false,
-                            paymentFee: feeService,
+                            paymentFee: feeService || 200,
                             serviceTypeId,
                             message,
                             axiosJWT,
@@ -617,33 +535,19 @@ function Pay({ axiosJWT }) {
       );
     }
   }, [
-    auth.tokenAuth,
-    auth.user.email,
+    auth,
     axiosJWT,
     dispatch,
     feeService,
-    init,
     isError,
     message,
     payMethod,
     payMethodActive,
     products,
     serviceTypeId,
-    userAddress?.items,
+    userAddress,
     valueAddress,
   ]);
-
-  useEffect(() => {
-    const events = ["chainChanged", "accountsChanged"];
-    const handleChange = () => {
-      init(ether.artifact);
-    };
-
-    events.forEach((e) => window.ethereum.on(e, handleChange));
-    return () => {
-      events.forEach((e) => window.ethereum.removeListener(e, handleChange));
-    };
-  }, [init, ether.artifact]);
 
   const handleShowPayTable = (method) => {
     if (method === "Thanh toán Online") {

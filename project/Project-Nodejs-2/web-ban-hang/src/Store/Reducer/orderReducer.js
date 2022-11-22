@@ -145,7 +145,7 @@ export const handleCreateOrderToGHN = createAsyncThunk(
           token: tokenKeys,
         },
         body: JSON.stringify({
-          payment_type_id: paymentTypeId,
+          payment_type_id: 1,
           note: note,
           required_note: requiredNote,
           return_phone: returnPhone,
@@ -167,7 +167,7 @@ export const handleCreateOrderToGHN = createAsyncThunk(
           pick_station_id: pickStationId,
           deliver_station_id: null,
           insurance_value: insuranceValue,
-          service_type_id: 2,
+          service_type_id: 1,
           coupon: coupon,
           pick_shift: pickShift,
           items: items,
