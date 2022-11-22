@@ -8,6 +8,7 @@ import {
 import { useDispatch } from "react-redux";
 import { handlePrintOrderOfUser } from "../../../../Store/Reducer/orderReducer";
 import { numberWithCommas } from "../../../../utils";
+import moment from "moment";
 
 function TableOrder({ orders, confirmDelete, handleShowNavigation }) {
   const dispatch = useDispatch();
@@ -45,12 +46,15 @@ function TableOrder({ orders, confirmDelete, handleShowNavigation }) {
       render: (_, record) => {
         return timeCreatedAtOrder(record);
       },
+      sorter: (a, b) => {
+        return moment(a.createdAt).unix() - moment(b.createdAt).unix();
+      },
     },
     {
       title: "Phí giao hàng",
       dataIndex: "fee",
       key: "fee",
-      render: (_, record) => `${numberWithCommas(record.paymentFee)} đ`
+      render: (_, record) => `${numberWithCommas(record.paymentFee)} đ`,
     },
     {
       title: "Tags",
@@ -108,7 +112,7 @@ function TableOrder({ orders, confirmDelete, handleShowNavigation }) {
     },
   ];
 
-  return <Table columns={columns} dataSource={orders} rowKey="_id"/>;
+  return <Table columns={columns} dataSource={orders} rowKey="_id" />;
 }
 
 TableOrder.propTypes = {};

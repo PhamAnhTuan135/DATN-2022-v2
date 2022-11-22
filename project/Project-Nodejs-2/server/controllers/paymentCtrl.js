@@ -17,7 +17,7 @@ const paypalProductCtrl = {
       minimumFractionDigits: 2,
     });
 
-    const items = products.map((product, index) => {
+    const items = products.map((product, _) => {
       const priceNew = +product.price / 23085;
       return {
         name: product.name,
