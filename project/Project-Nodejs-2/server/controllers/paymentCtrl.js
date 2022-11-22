@@ -5,6 +5,7 @@ const sendEMailPurchase = require("../utils/sendMailPurchase.js");
 
 // const baseURL = "https://datn2022-phamcongtuan.netlify.app"
 const baseURL = "http://localhost:1901";
+const baseURLBE = "http://localhost:8800/api";
 
 const paypalProductCtrl = {
   createPaypalPayment: async (req, res) => {
@@ -39,8 +40,8 @@ const paypalProductCtrl = {
           payment_method: "paypal",
         },
         redirect_urls: {
-          return_url: `/payment/success?total=${total}&email=${email}&paymentFee=${paymentFee}&serviceTypeId=${serviceTypeId}`,
-          cancel_url: "/payment/cancel",
+          return_url: `${baseURLBE}/payment/success?total=${total}&email=${email}&paymentFee=${paymentFee}&serviceTypeId=${serviceTypeId}`,
+          cancel_url: `${baseURLBE}/payment/cancel`,
         },
         transactions: [
           {
@@ -79,6 +80,7 @@ const paypalProductCtrl = {
     }
   },
   getPaypalPaymentSuccess: async (req, res) => {
+    console.log({ paymentSuccess: true });
     try {
       const { PayerID, paymentId, total, email, paymentFee, serviceTypeId } =
         req.query;

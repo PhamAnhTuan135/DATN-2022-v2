@@ -26,7 +26,6 @@ import {
   updateUserAddress,
   userAddressSelector,
 } from "../../Store/Reducer/userAddressReducer";
-import Web3 from "web3";
 import {
   loadingSelector,
   setLoadingAction,
@@ -41,7 +40,7 @@ import {
   orderSelector,
 } from "../../Store/Reducer/orderReducer";
 import { isEmptyObject } from "../../utils";
-import { ethSelector } from "../../Store/Reducer/ethReducer";
+
 const override = css`
   display: block;
   margin: 0 auto;
