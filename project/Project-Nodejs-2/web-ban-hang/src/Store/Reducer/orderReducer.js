@@ -166,7 +166,7 @@ export const handleCreateOrderToGHN = createAsyncThunk(
           height: Math.round(+height),
           pick_station_id: pickStationId,
           deliver_station_id: null,
-          insurance_value: insuranceValue,
+          insurance_value: insuranceValue >= 5000000 ? 3000000 : insuranceValue,
           service_type_id: 1,
           coupon: coupon,
           pick_shift: pickShift,
