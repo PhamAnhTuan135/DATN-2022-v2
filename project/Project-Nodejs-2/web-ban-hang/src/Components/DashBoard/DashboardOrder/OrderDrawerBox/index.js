@@ -3,9 +3,7 @@ import React, { useEffect, useState } from "react";
 import { humanImg } from "../../../../assets/fake-data/human.js";
 import { Button, Drawer } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  handleCreateOrderToGHN,
-} from "../../../../Store/Reducer/orderReducer.js";
+import { handleCreateOrderToGHN } from "../../../../Store/Reducer/orderReducer.js";
 import { numberWithCommas } from "../../../../utils/index.js";
 import { authSelector } from "../../../../Store/Reducer/authReducer.js";
 
@@ -52,7 +50,7 @@ function OrderDrawerBox({
               returnAddress: `${order.city.mota}, ${order.city.xa.WardName}, ${order.city.quan.DistrictName}, ${order.city.tinh.ProvinceName}, Vietnam`,
               clientOrderCode: "",
               codAmount:
-              order.products.reduce((accumulator, item) => {
+                order.products.reduce((accumulator, item) => {
                   return accumulator + item.price * item.qty;
                 }, 0) + order.paymentFee,
               content: order.products.reduce((accumulator, item) => {
@@ -97,7 +95,7 @@ function OrderDrawerBox({
               dispatch,
               order,
               tokenAuth: auth.tokenAuth,
-              axiosJWT
+              axiosJWT,
             })
           );
         }
@@ -310,8 +308,8 @@ function OrderDrawerBox({
                 đ
               </span>
             </div>{" "}
-            {orderItem && orderItem.complete ? (
-              orderItem.complete ? (
+            {orderItem && orderItem.complete !== "confirm" ? (
+              orderItem.complete === "pending" ? (
                 <Button
                   type="primary"
                   size={100}
