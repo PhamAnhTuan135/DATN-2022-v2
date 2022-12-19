@@ -25,14 +25,17 @@ export const updateProfileUser = createAsyncThunk(
 export const fetchSignupAction = createAsyncThunk(
   "signup/signupFetch",
   async (data, { rejectWithValue }) => {
-    const {val: {name, email, password}, history} = data;
+    const {
+      val: { name, email, password },
+      history,
+    } = data;
     try {
       await axios.post(`${baseURL}/auth/register`, {
         username: name,
         email,
         password,
       });
-      history.push('/verify-email')
+      history.push("/verify-email");
       toast.success(`Đăng ký thành công, hãy vào email của bạn để xác nhận 😍`);
     } catch (err) {
       console.log(err);
@@ -80,7 +83,7 @@ export const fetchSigninAction = createAsyncThunk(
 
 export const forgotPasswordCall = createAsyncThunk(
   "forgotPassword/forgotPasswordAction",
-  async ({email, history}) => {
+  async ({ email, history }) => {
     try {
       const res = await axios.post(`${baseURL}/auth/forgot-password`, {
         email,
@@ -188,7 +191,7 @@ const authSlice = createSlice({
     },
     resetIsForgetPassword: (state, action) => {
       state.auth.isForgetPassword = action.payload;
-    }
+    },
   },
   extraReducers: {
     //update user profile
@@ -271,8 +274,7 @@ const authSlice = createSlice({
         state.auth.user = action.payload;
       }
     },
-    [getUserByToken.rejected]: (state, action) => {
-    },
+    [getUserByToken.rejected]: (state, action) => {},
 
     // get users authentication
     [handleLogout.pending]: (state, action) => {},
@@ -284,8 +286,7 @@ const authSlice = createSlice({
       state.auth.tokenAuth = null;
       state.auth.isForgetPassword = false;
     },
-    [handleLogout.rejected]: (state, action) => {
-    },
+    [handleLogout.rejected]: (state, action) => {},
 
     // Signing
     [fetchSigninAction.pending]: (state, action) => {},
@@ -302,14 +303,14 @@ const authSlice = createSlice({
         state.auth.register = false;
       }
     },
-    [fetchSigninAction.rejected]: (state, action) => {
-    },
+    [fetchSigninAction.rejected]: (state, action) => {},
   },
 });
 
 const authReducer = authSlice.reducer;
 
 export const authSelector = (state) => state.authReducer.auth;
-export const { logoutAction, signingSuccess, resetIsForgetPassword } = authSlice.actions;
+export const { logoutAction, signingSuccess, resetIsForgetPassword } =
+  authSlice.actions;
 
 export default authReducer;

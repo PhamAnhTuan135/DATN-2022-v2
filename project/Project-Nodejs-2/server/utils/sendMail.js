@@ -1,48 +1,48 @@
-const nodemailer = require('nodemailer');
-const { google } = require('googleapis');
+const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
 const { OAuth2 } = google.auth;
-const OAUTH_PLAYGROUND = 'https://developers.google.com/oauthplayground';
+const OAUTH_PLAYGROUND = "https://developers.google.com/oauthplayground";
 
 const {
-    MAILING_SERVICE_CLIENT_ID,
-    MAILING_SERVICE_CLIENT_SECRET,
-    MAILING_SERVICE_REFRESH_TOKEN,
-    SENDER_EMAIL_ADDRESS,
+  MAILING_SERVICE_CLIENT_ID,
+  MAILING_SERVICE_CLIENT_SECRET,
+  MAILING_SERVICE_REFRESH_TOKEN,
+  SENDER_EMAIL_ADDRESS,
 } = process.env;
 
 const oauth2Client = new OAuth2(
-    MAILING_SERVICE_CLIENT_ID,
-    MAILING_SERVICE_CLIENT_SECRET,
-    MAILING_SERVICE_REFRESH_TOKEN,
-    OAUTH_PLAYGROUND,
+  MAILING_SERVICE_CLIENT_ID,
+  MAILING_SERVICE_CLIENT_SECRET,
+  MAILING_SERVICE_REFRESH_TOKEN,
+  OAUTH_PLAYGROUND
 );
 
 //send mail
 const sendEMail = (to, url, username, txt) => {
-    oauth2Client.setCredentials({
-        refresh_token: MAILING_SERVICE_REFRESH_TOKEN,
-    });
+  oauth2Client.setCredentials({
+    refresh_token: MAILING_SERVICE_REFRESH_TOKEN,
+  });
 
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        host: 'smtp.gmail.com',
-        auth: {
-            user: 'phamcongtuanz2001@gmail.com',
-            pass: process.env.PASS_EMAIL,
-            clientId: 'CLIENT_ID_HERE',
-            clientSecret: 'CLIENT_SECRET_HERE',
-            refreshToken: 'REFRESH_TOKEN_HERE',
-        },
-        tls: {
-            rejectUnauthorized: false,
-        },
-    });
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    host: "smtp.gmail.com",
+    auth: {
+      user: "phamcongtuanz2001@gmail.com",
+      pass: process.env.PASS_EMAIL,
+      clientId: "CLIENT_ID_HERE",
+      clientSecret: "CLIENT_SECRET_HERE",
+      refreshToken: "REFRESH_TOKEN_HERE",
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
 
-    const mailOptions = {
-        from: SENDER_EMAIL_ADDRESS,
-        to: to,
-        subject: 'Shop Điện Tử Phạm Tuấn',
-        html: `<!DOCTYPE html>
+  const mailOptions = {
+    from: SENDER_EMAIL_ADDRESS,
+    to: to,
+    subject: "Shop Điện Tử Phạm Tuấn",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -200,15 +200,15 @@ const sendEMail = (to, url, username, txt) => {
         </body>
         </html>
        `,
-    };
+  };
 
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Verfication email is sent to your gmail account');
-        }
-    });
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Verfication email is sent to your gmail account");
+    }
+  });
 };
 
 module.exports = sendEMail;

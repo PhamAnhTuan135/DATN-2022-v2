@@ -11,6 +11,7 @@ const { OAuth2 } = google.auth;
 const client = new OAuth2(process.env.MAILING_SERVICE_CLIENT_ID);
 
 const authCtrl = {
+  //đăng kí
   register: async (req, res) => {
     try {
       const { username, password, email } = req.body;

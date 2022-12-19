@@ -1,3 +1,4 @@
+import { Button } from "antd";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { skeletonProduct } from "../../assets/fake-data";
@@ -71,7 +72,17 @@ export default function Catalog() {
           </Grid>
         </div>
       </SectionBody>
-      <button onClick={handleLoadmoreProduct}>Load more</button>
+      <Button
+        onClick={handleLoadmoreProduct}
+        style={{
+          // display: "flex",
+          // justifyContent: "center",
+          // alignItems: "center",
+          marginLeft: "45%",
+        }}
+      >
+        Tải thêm
+      </Button>
       {/* <Empty /> */}
     </Helmet>
   );

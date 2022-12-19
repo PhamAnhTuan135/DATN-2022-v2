@@ -1,47 +1,47 @@
-const nodemailer = require('nodemailer');
-const { google } = require('googleapis');
+const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
 const { OAuth2 } = google.auth;
-const OAUTH_PLAYGROUND = 'https://developers.google.com/oauthplayground';
+const OAUTH_PLAYGROUND = "https://developers.google.com/oauthplayground";
 
 const {
-    MAILING_SERVICE_CLIENT_ID,
-    MAILING_SERVICE_CLIENT_SECRET,
-    MAILING_SERVICE_REFRESH_TOKEN,
-    SENDER_EMAIL_ADDRESS,
+  MAILING_SERVICE_CLIENT_ID,
+  MAILING_SERVICE_CLIENT_SECRET,
+  MAILING_SERVICE_REFRESH_TOKEN,
+  SENDER_EMAIL_ADDRESS,
 } = process.env;
 
 const oauth2Client = new OAuth2(
-    MAILING_SERVICE_CLIENT_ID,
-    MAILING_SERVICE_CLIENT_SECRET,
-    MAILING_SERVICE_REFRESH_TOKEN,
-    OAUTH_PLAYGROUND,
+  MAILING_SERVICE_CLIENT_ID,
+  MAILING_SERVICE_CLIENT_SECRET,
+  MAILING_SERVICE_REFRESH_TOKEN,
+  OAUTH_PLAYGROUND
 );
 
 //send mail
 const sendEMailPurchase = (to, username, products) => {
-    oauth2Client.setCredentials({
-        refresh_token: MAILING_SERVICE_REFRESH_TOKEN,
-    });
+  oauth2Client.setCredentials({
+    refresh_token: MAILING_SERVICE_REFRESH_TOKEN,
+  });
 
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        host: 'smtp.gmail.com',
-        auth: {
-            user: 'phamcongtuanz2001@gmail.com',
-            pass: process.env.PASS_EMAIL,
-            clientId: 'CLIENT_ID_HERE',
-            clientSecret: 'CLIENT_SECRET_HERE',
-            refreshToken: 'REFRESH_TOKEN_HERE',
-        },
-        tls: {
-            rejectUnauthorized: false,
-        },
-    });
-    const mailOptions = {
-        from: SENDER_EMAIL_ADDRESS,
-        to: to,
-        subject: 'Shop Điện tử Phạm Tuấn',
-        html: `<!DOCTYPE html>
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    host: "smtp.gmail.com",
+    auth: {
+      user: "phamcongtuanz2001@gmail.com",
+      pass: process.env.PASS_EMAIL,
+      clientId: "CLIENT_ID_HERE",
+      clientSecret: "CLIENT_SECRET_HERE",
+      refreshToken: "REFRESH_TOKEN_HERE",
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
+  const mailOptions = {
+    from: SENDER_EMAIL_ADDRESS,
+    to: to,
+    subject: "Shop Điện tử Phạm Tuấn",
+    html: `<!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
@@ -190,28 +190,28 @@ const sendEMailPurchase = (to, username, products) => {
                             </thead>
                             <tbody>
                             ${products.map(
-                                (
-                                    product,
-                                    index,
-                                ) => `<tr class="alert" role="alert" key=${index}>
+                              (
+                                product,
+                                index
+                              ) => `<tr class="alert" role="alert" key=${index}>
                                     <td class="border-bottom-0"><img src=${
-                                        product.description
+                                      product.description
                                     } alt=${
-                                    product.name
-                                } style="width: 35%, height: 35%"/></td>
+                                product.name
+                              } style="width: 35%, height: 35%"/></td>
                                     <td class="border-bottom-0">${
-                                        product.name
+                                      product.name
                                     }</td>
                                     <td class="status border-bottom-0"><span class="waiting">${
-                                        product.price
+                                      product.price
                                     }$</span></td>
                                     <td class="status border-bottom-0"><span class="waiting">${
-                                        product.quantity
+                                      product.quantity
                                     }$</span></td>
                                     <td class="border-bottom-0">
                                     ${product.price * product.quantity} $
                                     </td>
-                                </tr>`,
+                                </tr>`
                             )}
                                 
                             </tbody>
@@ -224,15 +224,15 @@ const sendEMailPurchase = (to, username, products) => {
         
         </html>
        `,
-    };
+  };
 
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Verfication email is sent to your gmail account');
-        }
-    });
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Verfication email is sent to your gmail account");
+    }
+  });
 };
 
 module.exports = sendEMailPurchase;
